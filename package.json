@@ -1,0 +1,29 @@
+{
+  "name": "@rule-kit/core",
+  "version": "0.0.1",
+  "description": "modern async rules engine",
+  "main": "src/engine.js",
+  "type": "module",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clinejm/rulekit.git"
+  },
+  "keywords": [
+    "async",
+    "rules",
+    "json"
+  ],
+  "author": "jason.cline@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/clinejm/rulekit/issues"
+  },
+  "homepage": "https://github.com/clinejm/rulekit#readme",
+  "devDependencies": {
+    "assume": "^2.3.0",
+    "mocha": "^8.2.1"
+  }
+}
