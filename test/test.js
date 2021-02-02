@@ -14,7 +14,7 @@ const simple = [
         result: true
     },
     {
-        label: 'First is no foot2',
+        label: 'First is not foo',
         rule: [
             { field: 'first', operator: 'is', value: 'foo' }
         ],
