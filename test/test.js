@@ -4,7 +4,7 @@ import compile from '../src/engine.js';
 
 const simple = [
     {
-        label: 'First is foo',
+        label: 'First `is` foo',
         rule: [
             { field: 'first', operator: 'is', value: 'foo' }
         ],
@@ -14,12 +14,34 @@ const simple = [
         result: true
     },
     {
-        label: 'First is not foo',
+        label: 'First `is` not foo',
         rule: [
             { field: 'first', operator: 'is', value: 'foo' }
         ],
         data: {
             first: 'adlakjdflskj'
+        },
+        result: false
+    },
+    {
+        label: 'Compare Field `is` equal',
+        rule: [
+            { field: 'password', operator: 'is', value: { field: 'confirmpass' } }
+        ],
+        data: {
+            password: 'foo',
+            confirmpass: 'foo'
+        },
+        result: true
+    },
+    {
+        label: 'Compare Field `is` value not equal',
+        rule: [
+            { field: 'password', operator: 'is', value: { field: 'confirmpass' } }
+        ],
+        data: {
+            password: 'foo',
+            confirmpass: 'dfdfd'
         },
         result: false
     }

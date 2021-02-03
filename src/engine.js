@@ -1,15 +1,12 @@
 
+const getValue = (data, config) => (config.value.field ? data[config.value.field] : config.value)
+
+
 const defaultOperators = {
-    is: (data, config) => {
-        let value = config.value;
-        if (config.value.field) {
-            value = data[config.value.field]
-        }
-        return data[config.field] === value;
-    },
-    is_not: (data, config) => (data[config.field] !== config.value),
+    is: (data, config) => (data[config.field] === getValue(data, config)),
+    is_not: (data, config) => (data[config.field] !== getValue(data, config)),
     async_test: async (data, config) => {
-        return sleep(1000).then(() => data[config.field] === config.value)
+        return sleep(1000).then(() => data[config.field] === getValue(config))
     },
 }
 
@@ -23,6 +20,20 @@ const _executeAnd = async (data, rules) => {
         //console.log('eval rule ', index)
         isTrue = await rule(data);
         if (!isTrue) {
+            break;
+        }
+    }
+    return isTrue;
+}
+
+const _executeOr = async (data, rules) => {
+    //console.log('_execute', data, rules);
+    let isTrue = false;
+    for (let index = 0; index < rules.length; index++) {
+        const rule = rules[index];
+        //console.log('eval rule ', index)
+        isTrue = await rule(data);
+        if (isTrue) {
             break;
         }
     }
