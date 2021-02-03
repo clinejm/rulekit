@@ -55,8 +55,12 @@ describe('Operator Test', function () {
             it(test.label, async function () {
 
                 const rule = compile({ rules: test.rule });
-                const result = await rule(test.data);
+                const { result, errorRule } = await rule(test.data);
                 assume(result).equal(test.result);
+                if (result === false) {
+                    const ruleIndex = test.errorRuleIndex || 0;
+                    assume(errorRule).equal(test.rule[ruleIndex]);
+                }
             });
 
         })
@@ -71,13 +75,13 @@ describe('Operator Test', function () {
 
             const rule = compile({ rules: test });
 
-            const result = await rule({
+            const { result, errorRule } = await rule({
                 first: 'Bar',
             });
 
             assume(result).is.false();
 
-            const result2 = await rule({
+            const { result: result2, errorRule2 } = await rule({
                 first: 'foo'
             });
 

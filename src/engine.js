@@ -15,15 +15,18 @@ const defaultOperators = {
 const _executeAnd = async (data, rules) => {
     //console.log('_execute', data, rules);
     let isTrue = true;
+    let errorRule = null;
     for (let index = 0; index < rules.length; index++) {
         const rule = rules[index];
-        //console.log('eval rule ', index)
-        isTrue = await rule(data);
+        isTrue = await rule.op(data, rule.config);
         if (!isTrue) {
+            errorRule = rule.config;
             break;
         }
     }
-    return isTrue;
+    return {
+        result: isTrue, errorRule
+    };
 }
 
 const _executeOr = async (data, rules) => {
@@ -32,7 +35,7 @@ const _executeOr = async (data, rules) => {
     for (let index = 0; index < rules.length; index++) {
         const rule = rules[index];
         //console.log('eval rule ', index)
-        isTrue = await rule(data);
+        isTrue = await rule.op(data, rule.config);
         if (isTrue) {
             break;
         }
@@ -46,9 +49,9 @@ const compile = ({ rules, operators = defaultOperators }) => {
         // console.log('Compling rule', rule);
         const op = operators[rule.operator];
         if (op) {
-            cmp.push((data) => (op(data, rule)));
+            cmp.push({ op, config: rule });
         } else {
-            console.error('Invalid rule ', rule)
+            console.error('Operator not found for rule ', rule)
         }
     });
     //console.log(cmp);
