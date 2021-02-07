@@ -196,6 +196,8 @@ describe('Operator Test', function () {
                     if (result === false) {
                         const ruleIndex = test.errorRuleIndex || 0;
                         assume(errorRule).equal(test.rule[ruleIndex]);
+                    } else {
+                        assume(errorRule).equal(null);
                     }
                 });
 
