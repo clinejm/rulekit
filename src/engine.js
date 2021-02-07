@@ -33,23 +33,27 @@ const _executeAnd = async (data, rules) => {
     };
 }
 
-const _executeOr = async (data, rules) => {
+const _executeOr = async (data, rules, rulesConfig) => {
     //console.log('_execute', data, rules);
     let isTrue = false;
+    let errorRule = rulesConfig;
     for (let index = 0; index < rules.length; index++) {
         const rule = rules[index];
-        //console.log('eval rule ', index)
+        //  console.log('eval rule ', index)
         isTrue = await rule.op(data, rule.config);
         if (isTrue) {
+            errorRule = null;
             break;
         }
     }
-    return isTrue;
+    return {
+        result: isTrue, errorRule
+    };
 }
 
-const compile = ({ rules, operators = defaultOperators }) => {
+const compileGroup = (rules, operators = defaultOperators) => {
     const cmp = [];
-    rules.forEach(rule => {
+    rules.rules.forEach(rule => {
         // console.log('Compling rule', rule);
         const op = operators[rule.operator];
         if (op) {
@@ -58,9 +62,18 @@ const compile = ({ rules, operators = defaultOperators }) => {
             console.error('Operator not found for rule ', rule)
         }
     });
-    //console.log(cmp);
-    const runner = async (data) => await _executeAnd(data, cmp);
+    const fn = rules.operator === 'or' ? _executeOr : _executeAnd
+    const runner = async (data) => await fn(data, cmp, rules);
     return runner;
+}
+
+
+const compile = ({ rules, operators = defaultOperators }) => {
+    if (Array.isArray(rules)) {
+        return compileGroup({ operator: 'and', rules }, operators);
+    } else {
+        return compileGroup(rules, operators);
+    }
 }
 
 export default compile;

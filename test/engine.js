@@ -16,11 +16,87 @@ describe('Check Engine', function () {
         });
 
         assume(result).is.false();
+        assume(errorRule).equal(test[0]);
 
-        const { result: result2, errorRule2 } = await rule({
+        const { result: result2, errorRule: errorRule2 } = await rule({
             first: 'foo'
         });
 
         assume(result2).is.true();
+        assume(errorRule2).equal(null);
+    });
+
+    it('All/And Operator Group', async function () {
+
+        const test =
+        {
+            operator: 'and', rules: [
+                { field: 'first', operator: 'is', value: 'foo' },
+                { field: 'last', operator: 'is', value: 'blort' }
+            ]
+        };
+
+
+        const rule = compile({ rules: test });
+
+
+        const { result, errorRule } = await rule({
+            first: 'Bar',
+        });
+        assume(result).is.false();
+        assume(errorRule).equal(test.rules[0]);
+
+
+        const { result: result2, errorRule: errorRule2 } = await rule({
+            first: 'foo',
+            last: 'blort'
+        });
+
+        assume(result2).is.true();
+        assume(errorRule2).equal(null);
+
+    });
+
+    it('Any/Or Operator Group', async function () {
+
+        const test =
+        {
+            operator: 'or', rules: [
+                { field: 'first', operator: 'is', value: 'foo' },
+                { field: 'first', operator: 'is', value: 'blort' }
+            ]
+        };
+
+
+        const rule = compile({ rules: test });
+
+
+        const { result, errorRule } = await rule({
+            first: 'Bar',
+        });
+        assume(result).is.false();
+        assume(errorRule).equal(test);
+
+
+        const { result: result2, errorRule: errorRule2 } = await rule({
+            first: 'foo'
+        });
+
+        assume(result2).is.true();
+        assume(errorRule2).equal(null);
+
+
+        const { result: result3, errorRule: errorRule3 } = await rule({
+            first: 'blort'
+        });
+
+        assume(result3).is.true();
+        assume(errorRule2).equal(null);
+
+
+        const { result: result4, errorRule: errorRule4 } = await rule({
+            first: 'aaaaa'
+        });
+        assume(result4).is.false();
     });
 });
