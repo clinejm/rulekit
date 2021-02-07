@@ -1,12 +1,16 @@
 
 const getValue = (data, config) => (config.value.field ? data[config.value.field] : config.value)
 
+const sleep = ms => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 
 const defaultOperators = {
     is: (data, config) => (data[config.field] === getValue(data, config)),
     is_not: (data, config) => (data[config.field] !== getValue(data, config)),
-    async_test: async (data, config) => {
-        return sleep(1000).then(() => data[config.field] === getValue(config))
+    async_is: async (data, config) => {
+        return sleep(config.time || 1000).then(() => data[config.field] === getValue(data, config))
     },
 }
 

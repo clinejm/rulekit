@@ -78,6 +78,68 @@ const tests = [
                 errorRuleIndex: 1
             }
         ]
+    },
+    {
+        label: 'Async Operators',
+        tests: [
+            {
+                label: 'First `async_is` foo',
+                rule: [
+                    { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
+                ],
+                data: {
+                    first: 'foo',
+                },
+                result: true
+            },
+            {
+                label: 'First `async_is` not foo ',
+                rule: [
+                    { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
+                ],
+                data: {
+                    first: 'fodddddo',
+                },
+                result: false,
+            },
+            {
+                label: 'First `async_is` foo and last `is` not bar ',
+                rule: [
+                    { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
+                    { field: 'last', operator: 'is', value: 'bar' }
+                ],
+                data: {
+                    first: 'foo',
+                    last: 'bar'
+                },
+                result: true
+            },
+            {
+                label: 'First `async_is` foo and last `is` not bar ',
+                rule: [
+                    { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
+                    { field: 'last', operator: 'is', value: 'bar' }
+                ],
+                data: {
+                    first: 'foo',
+                    last: 'bardd'
+                },
+                errorRuleIndex: 1,
+                result: false
+            },
+            {
+                label: 'First `async_is` not foo ',
+                rule: [
+                    { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
+                    { field: 'last', operator: 'is', value: 'bar' }
+                ],
+                data: {
+                    first: 'fodddddo',
+                    last: 'bar'
+                },
+                result: false,
+            },
+        ]
     }
 ];
 
