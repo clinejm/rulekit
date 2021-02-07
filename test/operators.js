@@ -46,6 +46,48 @@ const tests = [
                     confirmpass: 'dfdfd'
                 },
                 result: false
+            },
+            {
+                label: 'First `is_not` is not foo',
+                rule: [
+                    { field: 'first', operator: 'is_not', value: 'foo' }
+                ],
+                data: {
+                    first: 'foodd'
+                },
+                result: true
+            },
+            {
+                label: 'First `is_not` is foo',
+                rule: [
+                    { field: 'first', operator: 'is_not', value: 'foo' }
+                ],
+                data: {
+                    first: 'foo'
+                },
+                result: false
+            },
+            {
+                label: 'Compare Field `is_not` not equal',
+                rule: [
+                    { field: 'password', operator: 'is_not', value: { field: 'confirmpass' } }
+                ],
+                data: {
+                    password: 'foo',
+                    confirmpass: 'foo3'
+                },
+                result: true
+            },
+            {
+                label: 'Compare Field `is_not` values equal',
+                rule: [
+                    { field: 'password', operator: 'is_not', value: { field: 'confirmpass' } }
+                ],
+                data: {
+                    password: 'foo',
+                    confirmpass: 'foo'
+                },
+                result: false
             }
         ]
     },
