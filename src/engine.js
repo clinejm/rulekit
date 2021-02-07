@@ -22,9 +22,16 @@ const _executeAnd = async (data, rules) => {
     let errorRule = null;
     for (let index = 0; index < rules.length; index++) {
         const rule = rules[index];
-        isTrue = await rule.op(data, rule.config);
-        if (!isTrue) {
+        const result = await rule.op(data, rule.config);
+        console.log("_executeAnd", result, rule.config);
+        if (result === false) {
+            isTrue = false;
             errorRule = rule.config;
+            break;
+        }
+        if (result.errorRule) {
+            isTrue = false;
+            errorRule = result.errorRule;
             break;
         }
     }
@@ -55,7 +62,13 @@ const compileGroup = (rules, operators = defaultOperators) => {
     const cmp = [];
     rules.rules.forEach(rule => {
         // console.log('Compling rule', rule);
-        const op = operators[rule.operator];
+        let op = operators[rule.operator];
+        if (rule.rules) {
+            //this is a group operator and we need to compile it first.
+            //TODO group functions return object {result, errorRule}, vs normal ops that return true. 
+            //  need to nomalize. 
+            op = compileGroup(rule, operators);
+        }
         if (op) {
             cmp.push({ op, config: rule });
         } else {

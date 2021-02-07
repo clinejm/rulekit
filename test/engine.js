@@ -99,4 +99,47 @@ describe('Check Engine', function () {
         });
         assume(result4).is.false();
     });
+
+
+    it.only('Nested groups', async function () {
+
+        const test = [
+            { field: 'first', operator: 'is', value: 'foo' },
+            {
+                operator: 'or', rules: [
+                    { field: 'last', operator: 'is', value: 'foo' },
+                    { field: 'last', operator: 'is', value: 'blort' }
+                ]
+            }
+        ];
+
+
+        const rule = compile({ rules: test });
+
+        const { result, errorRule } = await rule({
+            first: 'Bar',
+        });
+
+        console.log('One', result, errorRule);
+
+        assume(result).is.false();
+        assume(errorRule).equal(test[0]);
+
+        const { result2, errorRule2 } = await rule({
+            first: 'foo',
+            last: 'aaaa'
+        });
+        console.log('two', result2, errorRule2);
+        assume(result2).is.false();
+        assume(errorRule2).equal(test[0]);
+
+        const { result: result3, errorRule: errorRule3 } = await rule({
+            first: 'foo',
+            last: 'blort'
+        });
+
+        console.log('three', result3, errorRule3);
+        assume(result3).is.true();
+        assume(errorRule3).equal(null);
+    });
 });
