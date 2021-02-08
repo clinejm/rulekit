@@ -22,7 +22,7 @@ const rules = [
 
 const rule = compile({ rules: rules, operators:baseOperators });
 
-let {result, message} = await rule({
+let {result, errorRule} = await rule({
     first: 'foo',
     last: 'B'
 });
@@ -30,7 +30,7 @@ let {result, message} = await rule({
 console.log('Results (True)', result, message);
 // true, null
 
-let {result, message} = await rule({
+let {result, errorRule} = await rule({
     first: 'foo',
     last: 'A'
 });

@@ -1,48 +1,90 @@
 
+const getValue = (data, config) => (config.value.field ? data[config.value.field] : config.value)
+
+const sleep = ms => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+
 const defaultOperators = {
-    is: (data, config) => {
-        let value = config.value;
-        if (config.value.field) {
-            value = data[config.value.field]
-        }
-        return data[config.field] === value;
-    },
-    is_not: (data, config) => (data[config.field] !== config.value),
-    async_test: async (data, config) => {
-        return sleep(1000).then(() => data[config.field] === config.value)
+    is: (data, config) => (data[config.field] === getValue(data, config)),
+    is_not: (data, config) => (data[config.field] !== getValue(data, config)),
+    async_is: async (data, config) => {
+        return sleep(config.time || 1000).then(() => data[config.field] === getValue(data, config))
     },
 }
 
 
 
 const _executeAnd = async (data, rules) => {
-    console.log('_execute', data, rules);
     let isTrue = true;
+    let errorRule = null;
     for (let index = 0; index < rules.length; index++) {
         const rule = rules[index];
-        console.log('eval rule ', index)
-        isTrue = await rule(data);
-        if (!isTrue) {
+        const result = await rule.op(data, rule.config);
+
+        if (result === false) {
+            isTrue = false;
+            errorRule = rule.config;
+            break;
+        }
+        if (result.errorRule) {
+            isTrue = false;
+            errorRule = result.errorRule;
             break;
         }
     }
-    return isTrue;
+    return {
+        result: isTrue, errorRule
+    };
 }
 
-const compile = ({ rules, operators = defaultOperators }) => {
+const _executeOr = async (data, rules, rulesConfig) => {
+    //console.log('_execute', data, rules);
+    let isTrue = false;
+    let errorRule = rulesConfig;
+    for (let index = 0; index < rules.length; index++) {
+        const rule = rules[index];
+        //  console.log('eval rule ', index)
+        const result = await rule.op(data, rule.config);
+        if (result === true || result.result === true) {
+            isTrue = true;
+            errorRule = null;
+            break;
+        }
+    }
+    return {
+        result: isTrue, errorRule
+    };
+}
+
+const compileGroup = (rules, operators = defaultOperators) => {
     const cmp = [];
-    rules.forEach(rule => {
-        console.log('Compling rule', rule);
-        const op = operators[rule.operator];
+    rules.rules.forEach(rule => {
+        // console.log('Compling rule', rule);
+        let op = operators[rule.operator];
+        if (rule.rules) {
+            //this is a group operator and we need to compile it first.
+            op = compileGroup(rule, operators);
+        }
         if (op) {
-            cmp.push((data) => (op(data, rule)));
+            cmp.push({ op, config: rule });
         } else {
-            console.error('Invalid rule ', rule)
+            console.error('Operator not found for rule ', rule)
         }
     });
-    console.log(cmp);
-    const runner = async (data) => await _executeAnd(data, cmp);
+    const fn = rules.operator === 'or' ? _executeOr : _executeAnd
+    const runner = async (data) => await fn(data, cmp, rules);
     return runner;
+}
+
+
+const compile = ({ rules, operators = defaultOperators }) => {
+    if (Array.isArray(rules)) {
+        return compileGroup({ operator: 'and', rules }, operators);
+    } else {
+        return compileGroup(rules, operators);
+    }
 }
 
 export default compile;
