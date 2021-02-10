@@ -8,7 +8,7 @@ modern async rules engine.
     - No code tools where users don't want to or can't be trusted to write javascript
     - Large and complex or dynamic forms where hand-coded validation is unreliable. 
     - Workflows
-    - Data process
+    - Data processing
 
 ## Features
 
