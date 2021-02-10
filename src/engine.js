@@ -15,7 +15,6 @@ const defaultOperators = {
 }
 
 
-
 const _executeAnd = async (data, rules) => {
     let isTrue = true;
     let errorRule = null;
@@ -40,12 +39,10 @@ const _executeAnd = async (data, rules) => {
 }
 
 const _executeOr = async (data, rules, rulesConfig) => {
-    //console.log('_execute', data, rules);
     let isTrue = false;
     let errorRule = rulesConfig;
     for (let index = 0; index < rules.length; index++) {
         const rule = rules[index];
-        //  console.log('eval rule ', index)
         const result = await rule.op(data, rule.config);
         if (result === true || result.result === true) {
             isTrue = true;
@@ -58,10 +55,19 @@ const _executeOr = async (data, rules, rulesConfig) => {
     };
 }
 
+
+const groupOperators = {
+    or: _executeOr,
+    and: _executeAnd
+}
+
 const compileGroup = (rules, operators = defaultOperators) => {
     const cmp = [];
+    let fn = groupOperators[rules.operator];
+    if (!fn) {
+        return;
+    }
     rules.rules.forEach(rule => {
-        // console.log('Compling rule', rule);
         let op = operators[rule.operator];
         if (rule.rules) {
             //this is a group operator and we need to compile it first.
@@ -73,7 +79,7 @@ const compileGroup = (rules, operators = defaultOperators) => {
             console.error('Operator not found for rule ', rule)
         }
     });
-    const fn = rules.operator === 'or' ? _executeOr : _executeAnd
+
     const runner = async (data) => await fn(data, cmp, rules);
     return runner;
 }
