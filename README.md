@@ -23,7 +23,7 @@ modern async rules engine.
     code with out the use of `eval` or any other shady hacks. 
 - Mix and match `sync` and `async` rules.
 - Rule Groups
-    - `and` all rules must be true for grouop to be true (this is the default)
+    - `and` all rules must be true for group to be true (this is the default)
     - `or` if any rule returns true then the group is true
 - Groups can be nested.
 - The rule or rule group that causes the rule to be `false` is returned as `errorRule`
