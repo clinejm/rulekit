@@ -80,7 +80,7 @@ const compileGroup = (rules, operators = defaultOperators) => {
         }
     });
 
-    const runner = async (data) => await fn(data, cmp, rules);
+    const runner = (data) => fn(data, cmp, rules);
     return runner;
 }
 
