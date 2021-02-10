@@ -2,6 +2,11 @@
 
 modern async rules engine.
 
+---
+**Very experimental. A side project to explore the building blocks of composable software systems. The goal is to create something useful but who knows if this is the right path. Please check it out. Constructive thoughts are welcome.**
+
+---
+
 ## When to use
 
 - Use were hand-coding javascript logic isn't practical or safe. 
@@ -51,7 +56,7 @@ npm install @rule-kit/core
 import compile, baseOperators from '@rule-kit/core';
 
 const rules = [
-    {  field: 'first', operator: 'is', value: 'foo' },
+    { field: 'first', operator: 'is', value: 'foo' },
     { field: 'last', operator: 'is_not', value: 'A' },
     { field: 'last', operator: 'is_not', value: 'C' },
 ];
