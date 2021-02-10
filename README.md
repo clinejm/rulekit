@@ -43,7 +43,9 @@ modern async rules engine.
 
 See roadmap for more operators to come. 
 
-## Installation
+## Installation *
+
+*not currently published on npm 
 
 ```bash
 npm install @rule-kit/core
