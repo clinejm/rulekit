@@ -5,7 +5,9 @@
   "main": "src/engine.js",
   "type": "module",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -16,7 +18,7 @@
     "rules",
     "json"
   ],
-  "author": "jason.cline@gmail.com",
+  "author": "clinejm",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/clinejm/rulekit/issues"
@@ -24,6 +26,6 @@
   "homepage": "https://github.com/clinejm/rulekit#readme",
   "devDependencies": {
     "assume": "^2.3.0",
-    "mocha": "^8.2.1"
+    "mocha": "^8.4.0"
   }
 }
