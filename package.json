@@ -1,6 +1,6 @@
 {
   "name": "@rule-kit/core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "modern async rules engine",
   "main": "src/engine.js",
   "type": "module",
