@@ -3,7 +3,6 @@
   "version": "0.0.2",
   "description": "modern async rules engine",
   "main": "src/engine.js",
-  "type": "module",
   "scripts": {
     "test": "mocha",
     "preversion": "npm test",

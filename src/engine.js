@@ -93,5 +93,5 @@ const compile = ({ rules, operators = defaultOperators }) => {
     }
 }
 
-export default compile;
+module.exports = compile;
 

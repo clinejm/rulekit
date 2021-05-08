@@ -1,5 +1,5 @@
-import assume from 'assume';
-import compile from '../src/engine.js';
+const assume = require('assume');
+const compile = require('../src/engine.js');
 
 const tests = [
     {
