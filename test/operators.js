@@ -1,5 +1,5 @@
 const assume = require('assume');
-const compile = require('../src/engine.js');
+const { compile } = require('../src/index.js');
 
 const tests = [
     {

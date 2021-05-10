@@ -1,5 +1,5 @@
 const assume = require('assume');
-const compile = require('../src/engine.js');
+const { compile } = require('../src/index.js');
 
 describe('Check Engine', function () {
     it('Can execute rule more than once', async function () {

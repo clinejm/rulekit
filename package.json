@@ -2,7 +2,7 @@
   "name": "@rule-kit/core",
   "version": "0.0.2",
   "description": "modern async rules engine",
-  "main": "src/engine.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "mocha",
     "preversion": "npm test",
