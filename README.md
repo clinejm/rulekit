@@ -55,7 +55,7 @@ npm install @rule-kit/core
 
 ```javascript
 
-import compile, baseOperators from '@rule-kit/core';
+import {compile, defaultOperators} from '@rule-kit/core';
 
 const rules = [
     { field: 'first', operator: 'is', value: 'foo' },
