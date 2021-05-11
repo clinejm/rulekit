@@ -20,6 +20,7 @@ const _executeAnd = async (data, rules) => {
     let errorRule = null;
     for (let index = 0; index < rules.length; index++) {
         const rule = rules[index];
+        // TODO handle thrown exceptions as rule errors. 
         const result = await rule.op(data, rule.config);
 
         if (result === false) {
