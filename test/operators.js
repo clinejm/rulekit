@@ -88,6 +88,47 @@ const tests = [
                     confirmpass: 'foo'
                 },
                 result: false
+            },
+            {
+                label: 'First `is_empty`',
+                rule: [
+                    { field: 'first', operator: 'is_empty' }
+                ],
+                data: {
+                    first: 'foo'
+                },
+                result: false
+            },
+            {
+                label: 'First `is_empty` (empty string)',
+                rule: [
+                    { field: 'first', operator: 'is_empty' }
+                ],
+                data: {
+                    first: ''
+                },
+                result: true
+            },
+            {
+                label: 'First `not_empty`',
+                rule: [
+                    { field: 'first', operator: 'not_empty' }
+                ],
+                data: {
+                    first: 'foo'
+                },
+                result: true
+            },
+            ,
+            {
+                label: 'First `not_empty` (empty string, return false)',
+                rule: [
+                    { field: 'first', operator: 'not_empty' }
+                ],
+                data: {
+                    first: ''
+                },
+                result: false
             }
         ]
     },

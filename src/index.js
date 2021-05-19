@@ -5,6 +5,10 @@ const sleep = ms => {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+function is_empty(data, config) {
+    const test = data[config.field];
+    return test === null || (test.trim && test.trim().length === 0)
+}
 
 const defaultOperators = {
     is: (data, config) => (data[config.field] === getValue(data, config)),
@@ -12,6 +16,8 @@ const defaultOperators = {
     async_is: async (data, config) => {
         return sleep(config.time || 1000).then(() => data[config.field] === getValue(data, config))
     },
+    is_empty: is_empty,
+    not_empty: (data, config) => !is_empty(data, config)
 }
 
 
