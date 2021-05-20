@@ -7,7 +7,7 @@ const sleep = ms => {
 
 function is_empty(data, config) {
     const test = data[config.field];
-    return test === null || (test.trim && test.trim().length === 0)
+    return !test || (test.trim && test.trim().length === 0)
 }
 
 const defaultOperators = {
