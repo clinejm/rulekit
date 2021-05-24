@@ -48,9 +48,9 @@ const tests = [
                 result: false
             },
             {
-                label: 'First `is_not` is not foo',
+                label: 'First `is` (not) is not foo',
                 rule: [
-                    { field: 'first', operator: 'is_not', value: 'foo' }
+                    { field: 'first', not: true, operator: 'is', value: 'foo' }
                 ],
                 data: {
                     first: 'foodd'
@@ -58,9 +58,9 @@ const tests = [
                 result: true
             },
             {
-                label: 'First `is_not` is foo',
+                label: 'First `is` (not) is foo',
                 rule: [
-                    { field: 'first', operator: 'is_not', value: 'foo' }
+                    { field: 'first', not: true, operator: 'is', value: 'foo' }
                 ],
                 data: {
                     first: 'foo'
@@ -68,9 +68,9 @@ const tests = [
                 result: false
             },
             {
-                label: 'Compare Field `is_not` not equal',
+                label: 'Compare Field `is` (not) not equal',
                 rule: [
-                    { field: 'password', operator: 'is_not', value: { field: 'confirmpass' } }
+                    { field: 'password', not: true, operator: 'is', value: { field: 'confirmpass' } }
                 ],
                 data: {
                     password: 'foo',
@@ -79,9 +79,9 @@ const tests = [
                 result: true
             },
             {
-                label: 'Compare Field `is_not` values equal',
+                label: 'Compare Field `is` (not) values equal',
                 rule: [
-                    { field: 'password', operator: 'is_not', value: { field: 'confirmpass' } }
+                    { field: 'password', not: true, operator: 'is', value: { field: 'confirmpass' } }
                 ],
                 data: {
                     password: 'foo',

@@ -12,7 +12,6 @@ function is_empty(data, config) {
 
 const defaultOperators = {
     is: (data, config) => (data[config.field] === getValue(data, config)),
-    is_not: (data, config) => (data[config.field] !== getValue(data, config)),
     async_is: async (data, config) => {
         return sleep(config.time || 1000).then(() => data[config.field] === getValue(data, config))
     },
@@ -68,6 +67,8 @@ const groupOperators = {
     and: _executeAnd
 }
 
+const NOT = (op) => ((data, config) => (!op(data, config)));
+
 const compileGroup = (rules, operators = defaultOperators) => {
     const cmp = [];
     let fn = groupOperators[rules.operator];
@@ -81,6 +82,10 @@ const compileGroup = (rules, operators = defaultOperators) => {
             op = compileGroup(rule, operators);
         }
         if (op) {
+            if (rule.not === true) {
+                //inverse the results of of the operator
+                op = NOT(op);
+            }
             cmp.push({ op, config: rule });
         } else {
             console.error('Operator not found for rule ', rule)

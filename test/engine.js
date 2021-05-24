@@ -26,6 +26,22 @@ describe('Check Engine', function () {
         assume(errorRule2).equal(null);
     });
 
+    it('Can inverse (not) an operator', async function () {
+
+        const test = [
+            { field: 'first', not: true, operator: 'is', value: 'foo' }
+        ];
+
+        const rule = compile({ rules: test });
+
+        const { result, errorRule } = await rule({
+            first: 'Bar',
+        });
+
+        assume(result).is.true();
+        assume(errorRule).equal(null);
+    });
+
     it('All/And Operator Group', async function () {
 
         const test =
