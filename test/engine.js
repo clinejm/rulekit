@@ -156,6 +156,35 @@ describe('Check Engine', function () {
         assume(errorRule3).equal(null);
     });
 
+    it('Rule.fields contains set of all fields used in the rules', async function () {
+
+        const test = [
+            { field: 'first', operator: 'is', value: 'foo' },
+            { field: 'bob', operator: 'is', value: 'blort' },
+            { field: 'stan', operator: 'is', value: 'foo' },
+            {
+                operator: 'or', rules: [
+                    { field: 'last', operator: 'is', value: 'foo' },
+                    { field: 'stan', operator: 'is', value: 'foo' },
+                    { field: 'steve', operator: 'is', value: 'blort' },
+                    { field: 'aaaaa', operator: 'is', value: { field: 'fieldcompare' } },
+                    {
+                        operator: 'or', rules: [
+                            { field: 'stan', operator: 'is', value: 'foo' },
+                            { field: 'blort', operator: 'is', value: 'blort' }
+                        ]
+                    }
+                ],
+            }
+        ];
+
+        const rule = compile({ rules: test });
+        const sorted = [...rule.fields].sort();
+        assume(rule.fields).is.a('array');
+        assume(sorted).eqls(["aaaaa", "blort", "bob", "fieldcompare", "first", "last", "stan", "steve"]);
+
+    });
+
 
     it('Nested group (Or)', async function () {
 

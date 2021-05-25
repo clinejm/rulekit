@@ -39,7 +39,9 @@ modern async rules engine.
 ## Built-in Operators
 
 - `is`  
-- `is_not`
+- `is_empty`
+- `not_empty`
+
 
 See roadmap for more operators to come. 
 
@@ -57,8 +59,8 @@ import {compile, defaultOperators} from '@rule-kit/core';
 
 const rules = [
     { field: 'first', operator: 'is', value: 'foo' },
-    { field: 'last', operator: 'is_not', value: 'A' },
-    { field: 'last', operator: 'is_not', value: 'C' },
+    { field: 'last', not: true, operator: 'is', value: 'A' },
+    { field: 'last', not: true, operator: 'is', value: 'C' },
 ];
 
 const rule = compile({ rules: rules, operators:baseOperators })
@@ -156,20 +158,42 @@ An operator is just a function it will receive to arguments
 
 const getValue = (data, config) => (config.value.field ? data[config.value.field] : config.value)
 
-
 const sleep = ms => {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-
-const defaultOperators = {
-    is: (data, config) => (data[config.field] === getValue(data, config)),
-    is_not: (data, config) => (data[config.field] !== getValue(data, config)),
-    async_is: async (data, config) => {
-        return sleep(config.time || 1000).then(() => data[config.field] === getValue(data, config))
-    },
+function is_empty(data, config) {
+    const test = data[config.field];
+    return !test || (test.trim && test.trim().length === 0)
 }
 
+const defaultInputs = (config) => (config?.value?.field ? [config.field, config?.value?.field] : [config.field]);
+const fieldOnlyInput = (config) => ([config.field]);
+
+const defaultOperators = {
+    is: {
+        type: 'sync',
+        inputs: defaultInputs,
+        fn: (data, config) => (data[config.field] === getValue(data, config)),
+    },
+    async_is: {
+        type: 'async',
+        inputs: defaultInputs,
+        fn: async (data, config) => {
+            return sleep(config.time || 1000).then(() => data[config.field] === getValue(data, config))
+        }
+    },
+    is_empty: {
+        type: 'sync',
+        inputs: fieldOnlyInput,
+        fn: is_empty
+    },
+    not_empty: {
+        type: 'sync',
+        inputs: fieldOnlyInput,
+        fn: (data, config) => !is_empty(data, config)
+    }
+}
 
 ```
 

@@ -10,13 +10,32 @@ function is_empty(data, config) {
     return !test || (test.trim && test.trim().length === 0)
 }
 
+const defaultInputs = (config) => (config?.value?.field ? [config.field, config?.value?.field] : [config.field]);
+const fieldOnlyInput = (config) => ([config.field]);
+
 const defaultOperators = {
-    is: (data, config) => (data[config.field] === getValue(data, config)),
-    async_is: async (data, config) => {
-        return sleep(config.time || 1000).then(() => data[config.field] === getValue(data, config))
+    is: {
+        type: 'sync',
+        inputs: defaultInputs,
+        fn: (data, config) => (data[config.field] === getValue(data, config)),
     },
-    is_empty: is_empty,
-    not_empty: (data, config) => !is_empty(data, config)
+    async_is: {
+        type: 'async',
+        inputs: defaultInputs,
+        fn: async (data, config) => {
+            return sleep(config.time || 1000).then(() => data[config.field] === getValue(data, config))
+        }
+    },
+    is_empty: {
+        type: 'sync',
+        inputs: fieldOnlyInput,
+        fn: is_empty
+    },
+    not_empty: {
+        type: 'sync',
+        inputs: fieldOnlyInput,
+        fn: (data, config) => !is_empty(data, config)
+    }
 }
 
 
@@ -69,22 +88,31 @@ const groupOperators = {
 
 const NOT = (op) => ((data, config) => (!op(data, config)));
 
-const compileGroup = (rules, operators = defaultOperators) => {
+const compileGroup = (rules, operators, ruleFields) => {
     const cmp = [];
     let fn = groupOperators[rules.operator];
     if (!fn) {
         return;
     }
     rules.rules.forEach(rule => {
-        let op = operators[rule.operator];
+        let operator = operators[rule.operator];
+
+        let op = operator?.fn;
         if (rule.rules) {
             //this is a group operator and we need to compile it first.
-            op = compileGroup(rule, operators);
+            op = compileGroup(rule, operators, ruleFields);
         }
         if (op) {
             if (rule.not === true) {
-                //inverse the results of of the operator
+                //flip the results of of the operator
                 op = NOT(op);
+            }
+
+            if (operator && operator.inputs) {
+                const fields = operator.inputs(rule);
+                if (fields) {
+                    fields.forEach(item => ruleFields[item] = true);
+                }
             }
             cmp.push({ op, config: rule });
         } else {
@@ -96,13 +124,11 @@ const compileGroup = (rules, operators = defaultOperators) => {
     return runner;
 }
 
-
 const compile = ({ rules, operators = defaultOperators }) => {
-    if (Array.isArray(rules)) {
-        return compileGroup({ operator: 'and', rules }, operators);
-    } else {
-        return compileGroup(rules, operators);
-    }
+    const ruleFields = {};
+    const rule = compileGroup(Array.isArray(rules) ? { operator: 'and', rules } : rules, operators, ruleFields);
+    rule.fields = Object.keys(ruleFields);
+    return rule;
 }
 
 module.exports = { compile, defaultOperators };

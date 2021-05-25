@@ -10,6 +10,7 @@ const tests = [
                 rule: [
                     { field: 'first', operator: 'is', value: 'foo' }
                 ],
+                fields: ['first'],
                 data: {
                     first: 'foo'
                 },
@@ -20,6 +21,7 @@ const tests = [
                 rule: [
                     { field: 'first', operator: 'is', value: 'foo' }
                 ],
+                fields: ['first'],
                 data: {
                     first: 'adlakjdflskj'
                 },
@@ -52,6 +54,7 @@ const tests = [
                 rule: [
                     { field: 'first', not: true, operator: 'is', value: 'foo' }
                 ],
+                fields: ['first'],
                 data: {
                     first: 'foodd'
                 },
@@ -62,6 +65,7 @@ const tests = [
                 rule: [
                     { field: 'first', not: true, operator: 'is', value: 'foo' }
                 ],
+                fields: ['first'],
                 data: {
                     first: 'foo'
                 },
@@ -72,6 +76,7 @@ const tests = [
                 rule: [
                     { field: 'password', not: true, operator: 'is', value: { field: 'confirmpass' } }
                 ],
+                fields: ['password', 'confirmpass'],
                 data: {
                     password: 'foo',
                     confirmpass: 'foo3'
@@ -83,6 +88,7 @@ const tests = [
                 rule: [
                     { field: 'password', not: true, operator: 'is', value: { field: 'confirmpass' } }
                 ],
+                fields: ['password', 'confirmpass'],
                 data: {
                     password: 'foo',
                     confirmpass: 'foo'
@@ -94,6 +100,7 @@ const tests = [
                 rule: [
                     { field: 'first', operator: 'is_empty' }
                 ],
+                fields: ['first'],
                 data: {
                     first: 'foo'
                 },
@@ -104,6 +111,7 @@ const tests = [
                 rule: [
                     { field: 'first', operator: 'is_empty' }
                 ],
+                fields: ['first'],
                 data: {
                     first: ''
                 },
@@ -114,6 +122,7 @@ const tests = [
                 rule: [
                     { field: 'first', operator: 'not_empty' }
                 ],
+                fields: ['first'],
                 data: {
                     first: 'foo'
                 },
@@ -125,6 +134,7 @@ const tests = [
                 rule: [
                     { field: 'first', operator: 'not_empty' }
                 ],
+                fields: ['first'],
                 data: {
                     first: ''
                 },
@@ -141,6 +151,7 @@ const tests = [
                     { field: 'first', operator: 'is', value: 'foo' },
                     { field: 'last', operator: 'is', value: 'bar' }
                 ],
+                fields: ['first', 'last'],
                 data: {
                     first: 'foo',
                     last: 'bar'
@@ -153,6 +164,7 @@ const tests = [
                     { field: 'first', operator: 'is', value: 'foo' },
                     { field: 'last', operator: 'is', value: 'ddddddd' }
                 ],
+                fields: ['first', 'last'],
                 data: {
                     first: 'foo',
                     last: 'bar'
@@ -170,6 +182,7 @@ const tests = [
                 rule: [
                     { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
                 ],
+                fields: ['first'],
                 data: {
                     first: 'foo',
                 },
@@ -180,6 +193,7 @@ const tests = [
                 rule: [
                     { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
                 ],
+                fields: ['first'],
                 data: {
                     first: 'fodddddo',
                 },
@@ -191,6 +205,7 @@ const tests = [
                     { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
                     { field: 'last', operator: 'is', value: 'bar' }
                 ],
+                fields: ['first', 'last'],
                 data: {
                     first: 'foo',
                     last: 'bar'
@@ -203,6 +218,7 @@ const tests = [
                     { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
                     { field: 'last', operator: 'is', value: 'bar' }
                 ],
+                fields: ['first', 'last'],
                 data: {
                     first: 'foo',
                     last: 'bardd'
@@ -216,6 +232,7 @@ const tests = [
                     { field: 'first', operator: 'async_is', time: 10, value: 'foo' },
                     { field: 'last', operator: 'is', value: 'bar' }
                 ],
+                fields: ['first', 'last'],
                 data: {
                     first: 'fodddddo',
                     last: 'bar'
@@ -232,6 +249,9 @@ describe('Operator Test', function () {
             group.tests.forEach((test) => {
                 it(test.label, async function () {
                     const rule = compile({ rules: test.rule });
+                    if (test.fields) {
+                        assume(rule.fields).eqls(test.fields);
+                    }
                     const { result, errorRule } = await rule(test.data);
                     assume(result).equal(test.result);
                     if (result === false) {
