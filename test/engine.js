@@ -26,6 +26,30 @@ describe('Check Engine', function () {
         assume(errorRule2).equal(null);
     });
 
+    it('default field will be used if field is missing', async function () {
+
+        const test = [
+            { operator: 'is', value: 'foo' }
+        ];
+
+
+        const rule = compile({ rules: test, defaultField: 'first' });
+
+        const { result, errorRule } = await rule({
+            first: 'Bar',
+        });
+
+        assume(result).is.false();
+        assume(errorRule).eqls({ field: 'first', operator: 'is', value: 'foo' });
+
+        const { result: result2, errorRule: errorRule2 } = await rule({
+            first: 'foo'
+        });
+
+        assume(result2).is.true();
+        assume(errorRule2).equal(null);
+    });
+
     it('Can inverse (not) an operator', async function () {
 
         const test = [
