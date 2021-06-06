@@ -35,6 +35,9 @@ describe('Check Engine', function () {
 
         const rule = compile({ rules: test, defaultField: 'first' });
 
+        assume(rule.fields).is.a('array');
+        assume(rule.fields).eqls(['first']);
+
         const { result, errorRule } = await rule({
             first: 'Bar',
         });
