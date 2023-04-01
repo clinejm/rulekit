@@ -1,6 +1,8 @@
-var { defaultOperators, getValue, defaultInputs, fieldOnlyInput } = require('./defaultOperators');
+import { defaultOperators, getValue, defaultInputs, fieldOnlyInput } from './defaultOperators';
 
-const _executeAnd = async (data, rules) => {
+import { GroupOperatorFn, RuleConfig, CompiledRule, DefaultOperators, OperatorFn } from './types';
+
+const _executeAnd: GroupOperatorFn = async (data, rules) => {
     let isTrue = true;
     let errorRule = null;
     for (let index = 0; index < rules.length; index++) {
@@ -24,7 +26,7 @@ const _executeAnd = async (data, rules) => {
     };
 }
 
-const _executeOr = async (data, rules, rulesConfig) => {
+const _executeOr: GroupOperatorFn = async (data, rules, rulesConfig) => {
     let isTrue = false;
     let errorRule = rulesConfig;
     for (let index = 0; index < rules.length; index++) {
@@ -42,24 +44,24 @@ const _executeOr = async (data, rules, rulesConfig) => {
 }
 
 
-const groupOperators = {
+const groupOperators: DefaultOperators = {
     or: _executeOr,
     and: _executeAnd
 }
 
-const NOT = (op) => ((data, config) => (!op(data, config)));
+const NOT = (op: OperatorFn): OperatorFn => ((data, config) => (!op(data, config)));
 
-const compileGroup = (rules, operators, ruleFields, defaultField) => {
-    const cmp = [];
+const compileGroup = (rules: RuleConfig, operators: DefaultOperators, ruleFields: {}, defaultField: string): OperatorFn | undefined => {
+    const cmp: CompiledRule[] = [];
     let fn = groupOperators[rules.operator];
-    if (!fn) {
+    if (!fn || !rules.rules) {
         return;
     }
     rules.rules.forEach(ruleConf => {
         let rule = ruleConf;
         let operator = operators[rule.operator];
 
-        let op = operator?.fn;
+        let op: OperatorFn | undefined = operator?.fn;
 
 
         if (defaultField && !rule.field) {
@@ -88,16 +90,22 @@ const compileGroup = (rules, operators, ruleFields, defaultField) => {
         }
     });
 
-    const runner = (data) => fn(data, cmp, rules);
+    const runner = (data: any) => fn(data, cmp, rules);
     return runner;
 }
 
-const compile = ({ rules, operators = defaultOperators, defaultField }) => {
+type CompileProps = {
+    rules: RuleConfig | RuleConfig[],
+    operators?: DefaultOperators,
+    defaultField?: string
+}
+
+const compile = ({ rules, operators = defaultOperators, defaultField }: CompileProps) => {
     const ruleFields = {};
     const rule = compileGroup(Array.isArray(rules) ? { operator: 'and', rules } : rules, operators, ruleFields, defaultField);
     rule.fields = Object.keys(ruleFields);
     return rule;
 }
 
-module.exports = { compile, defaultOperators, getValue, defaultInputs, fieldOnlyInput };
+export { compile, defaultOperators, getValue, defaultInputs, fieldOnlyInput };
 

@@ -1,5 +1,5 @@
-const assume = require('assume');
-const { compile } = require('../src/index.js');
+import assume from 'assume';
+import { compile } from '../src/index.js';
 
 const tests = [
     {
