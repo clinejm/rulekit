@@ -1,4 +1,4 @@
-import { Config, DefaultOperators, Operator } from "./types";
+import { Config, Operators, Operator } from "./types";
 
 
 const getValue = (data: any, config: Config): any => (config.value?.field ? data[config.value.field] : config.value);
@@ -15,7 +15,7 @@ function is_empty(data: any, config: Config): boolean {
 const defaultInputs = (config: Config): string[] => (config?.value?.field ? [config.field, config?.value?.field] : [config.field]);
 const fieldOnlyInput = (config: Config): string[] => ([config.field]);
 
-const defaultOperators: DefaultOperators = {
+const defaultOperators: Operators = {
     is: {
         inputs: defaultInputs,
         fn: (data, config) => data[config.field] === getValue(data, config),

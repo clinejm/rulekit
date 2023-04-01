@@ -6,7 +6,7 @@ import {
     Operator,
 } from './defaultOperators';
 
-import { GroupOperatorFn, RuleConfig, CompiledRule, DefaultOperators } from './types';
+import { GroupOperatorFn, RuleConfig, CompiledRule, Operators } from './types';
 
 
 const _executeAnd: GroupOperatorFn = async (data, rules, rulesConfig) => {
@@ -113,7 +113,7 @@ const compileGroup = (
     return runner;
 }
 
-const compile = ({ rules, operators = defaultOperators, defaultField }: { rules: RuleConfig | RuleConfig[], operators?: DefaultOperators, defaultField?: string }) => {
+const compile = ({ rules, operators = defaultOperators, defaultField }: { rules: RuleConfig | RuleConfig[], operators?: Operators, defaultField?: string }) => {
     const ruleFields = {};
     const rule = compileGroup(Array.isArray(rules) ? { operator: 'and', rules } : rules, operators, ruleFields, defaultField);
     rule.fields = Object.keys(ruleFields);

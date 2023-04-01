@@ -33,6 +33,6 @@ export interface Operator {
     async?: boolean;
 }
 
-export interface DefaultOperators {
+export interface Operators {
     [key: string]: Operator;
 }

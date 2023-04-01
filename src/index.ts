@@ -1,6 +1,6 @@
 import { defaultOperators, getValue, defaultInputs, fieldOnlyInput } from './defaultOperators';
 
-import { GroupOperatorFn, RuleConfig, CompiledRule, DefaultOperators, OperatorFn } from './types';
+import { GroupOperatorFn, RuleConfig, CompiledRule, Operators, OperatorFn } from './types';
 
 const _executeAnd: GroupOperatorFn = async (data, rules) => {
     let isTrue = true;
@@ -44,14 +44,14 @@ const _executeOr: GroupOperatorFn = async (data, rules, rulesConfig) => {
 }
 
 
-const groupOperators: DefaultOperators = {
+const groupOperators: Operators = {
     or: _executeOr,
     and: _executeAnd
 }
 
 const NOT = (op: OperatorFn): OperatorFn => ((data, config) => (!op(data, config)));
 
-const compileGroup = (rules: RuleConfig, operators: DefaultOperators, ruleFields: {}, defaultField: string): OperatorFn | undefined => {
+const compileGroup = (rules: RuleConfig, operators: Operators, ruleFields: {}, defaultField: string): OperatorFn | undefined => {
     const cmp: CompiledRule[] = [];
     let fn = groupOperators[rules.operator];
     if (!fn || !rules.rules) {
@@ -96,7 +96,7 @@ const compileGroup = (rules: RuleConfig, operators: DefaultOperators, ruleFields
 
 type CompileProps = {
     rules: RuleConfig | RuleConfig[],
-    operators?: DefaultOperators,
+    operators?: Operators,
     defaultField?: string
 }
 
