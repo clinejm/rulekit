@@ -10,6 +10,10 @@ const _executeAnd: GroupOperatorFn = async (data, rules) => {
         // TODO handle thrown exceptions as rule errors. 
         const result = await rule.op(data, rule.config);
 
+        if (result === true) {
+            continue;
+        }
+
         if (result === false) {
             isTrue = false;
             errorRule = rule.config;
@@ -32,9 +36,13 @@ const _executeOr: GroupOperatorFn = async (data, rules, rulesConfig) => {
     for (let index = 0; index < rules.length; index++) {
         const rule = rules[index];
         const result = await rule.op(data, rule.config);
+        if (result === false) {
+            continue;
+        }
+
         if (result === true || result.result === true) {
             isTrue = true;
-            errorRule = null;
+            errorRule = undefined;
             break;
         }
     }
@@ -51,7 +59,7 @@ const groupOperators: Operators = {
 
 const NOT = (op: OperatorFn): OperatorFn => ((data, config) => (!op(data, config)));
 
-const compileGroup = (rules: RuleConfig, operators: Operators, ruleFields: {}, defaultField: string): OperatorFn | undefined => {
+const compileGroup = (rules: RuleConfig, operators: Operators, ruleFields: {}, defaultField?: string): OperatorFn | undefined => {
     const cmp: CompiledRule[] = [];
     let fn = groupOperators[rules.operator];
     if (!fn || !rules.rules) {

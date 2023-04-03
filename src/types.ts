@@ -8,12 +8,12 @@ export type RuleConfig = {
 export type GroupOperatorFn = (
     data: any,
     rules: CompiledRule[],
-    rulesConfig: RuleConfig
-) => Promise<{ result: boolean; errorRule: RuleConfig | null; } | boolean>;
+    rulesConfig?: RuleConfig
+) => OperatorReturnType;
 
 
 export interface CompiledRule {
-    op: GroupOperatorFn;
+    op: OperatorFn;
     config: RuleConfig;
 }
 
@@ -25,7 +25,11 @@ export interface Config {
     time?: number;
 }
 
-export type OperatorFn = (data: any, config: Config) => boolean | Promise<boolean>;
+export type OperatorResults = boolean | { result: boolean; errorRule: RuleConfig | null; };
+
+export type OperatorReturnType = OperatorResults | Promise<OperatorResults>;
+
+export type OperatorFn = (data: any, config: Config) => OperatorReturnType;
 
 export interface Operator {
     inputs?: (config: Config) => string[];
