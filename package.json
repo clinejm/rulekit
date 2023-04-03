@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/clinejm/rulekit#readme",
   "devDependencies": {
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.11",
     "assume": "^2.3.0",
     "mocha": "^10.2.0",
