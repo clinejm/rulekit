@@ -1,6 +1,11 @@
 import { defaultOperators, getValue, defaultInputs, fieldOnlyInput } from './defaultOperators';
 
-import { GroupOperatorFn, RuleConfig, CompiledRule, Operators, OperatorFn } from './types';
+import { GroupOperatorFn, RuleConfig, CompiledRule, Operators, OperatorFn, GroupOperators, OperatorResults, Rule } from './types';
+
+type RuleFields = {
+    [key: string]: boolean;
+}
+
 
 const _executeAnd: GroupOperatorFn = async (data, rules) => {
     let isTrue = true;
@@ -48,22 +53,22 @@ const _executeOr: GroupOperatorFn = async (data, rules, rulesConfig) => {
     }
     return {
         result: isTrue, errorRule
-    };
+    } as OperatorResults;
 }
 
 
-const groupOperators: Operators = {
-    or: _executeOr,
-    and: _executeAnd
+const groupOperators: GroupOperators = {
+    "or": _executeOr,
+    "and": _executeAnd
 }
 
 const NOT = (op: OperatorFn): OperatorFn => ((data, config) => (!op(data, config)));
 
-const compileGroup = (rules: RuleConfig, operators: Operators, ruleFields: {}, defaultField?: string): OperatorFn | undefined => {
+const compileGroup = (rules: RuleConfig, operators: Operators, ruleFields: RuleFields, defaultField?: string): OperatorFn => {
     const cmp: CompiledRule[] = [];
     let fn = groupOperators[rules.operator];
     if (!fn || !rules.rules) {
-        return;
+        return (data: any) => false
     }
     rules.rules.forEach(ruleConf => {
         let rule = ruleConf;
@@ -108,12 +113,16 @@ type CompileProps = {
     defaultField?: string
 }
 
+
 const compile = ({ rules, operators = defaultOperators, defaultField }: CompileProps) => {
-    const ruleFields = {};
-    const rule = compileGroup(Array.isArray(rules) ? { operator: 'and', rules } : rules, operators, ruleFields, defaultField);
-    rule.fields = Object.keys(ruleFields);
+    const ruleFields: RuleFields = {};
+    const rule = compileGroup(Array.isArray(rules) ? { operator: 'and', rules } : rules, operators, ruleFields, defaultField) as Rule;
+    if (rule) {
+        rule.fields = Object.keys(ruleFields);
+        rule.fieldMap = ruleFields;
+    }
     return rule;
 }
 
-export { compile, defaultOperators, getValue, defaultInputs, fieldOnlyInput };
+export { compile, defaultOperators, getValue, defaultInputs, fieldOnlyInput, RuleConfig, CompiledRule, Operators, OperatorFn, GroupOperators, OperatorResults, Rule, RuleFields };
 

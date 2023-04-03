@@ -17,26 +17,35 @@ export interface CompiledRule {
     config: RuleConfig;
 }
 
-export interface Config {
-    field: string;
-    value?: {
-        field?: string;
-    };
-    time?: number;
-}
 
 export type OperatorResults = boolean | { result: boolean; errorRule: RuleConfig | null; };
 
 export type OperatorReturnType = OperatorResults | Promise<OperatorResults>;
 
-export type OperatorFn = (data: any, config: Config) => OperatorReturnType;
+export type OperatorFn = {
+    (data: any, config: RuleConfig): OperatorReturnType;
+}
+
+
+export type Rule = {
+    (data: any): { result: boolean; errorRule: RuleConfig | null };
+    fields?: string[];
+    fieldMap?: { [key: string]: boolean };
+}
 
 export interface Operator {
-    inputs?: (config: Config) => string[];
+    inputs?: (config: RuleConfig) => string[];
     fn: OperatorFn;
     async?: boolean;
 }
 
+
+
+
 export interface Operators {
     [key: string]: Operator;
+}
+
+export interface GroupOperators {
+    [key: string]: GroupOperatorFn;
 }
