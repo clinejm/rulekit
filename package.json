@@ -3,13 +3,16 @@
   "version": "0.0.7",
   "description": "modern async rules engine",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register 'test/**/*.ts'",
     "build": "tsup src/index.ts --format esm,cjs --dts ",
     "preversion": "npm run build && npm test",
     "postversion": "git push && git push --tags",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "changeset": "changeset",
+    "release": "npm run build && npm run test && changeset publish"
   },
   "repository": {
     "type": "git",
@@ -27,6 +30,7 @@
   },
   "homepage": "https://github.com/clinejm/rulekit#readme",
   "devDependencies": {
+    "@changesets/cli": "^2.26.1",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.11",
     "assume": "^2.3.0",
