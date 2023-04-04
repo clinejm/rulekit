@@ -1,3 +1,6 @@
 .github
 .npmignore
+.changeset
 test
+src
+tsconfig.json
