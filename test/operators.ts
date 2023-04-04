@@ -1,7 +1,22 @@
-const assume = require('assume');
-const { compile } = require('../src/index.js');
+import assume from 'assume';
+import { compile } from '../src/index';
 
-const tests = [
+type Test = {
+    label: string;
+    rule: any;
+    fields?: string[];
+    data: any;
+    result: boolean;
+    errorRuleIndex?: number;
+};
+
+type TestGroup = {
+    label: string;
+    tests: Test[];
+};
+
+
+const tests: TestGroup[] = [
     {
         label: 'Single Operators',
         tests: [
@@ -128,7 +143,6 @@ const tests = [
                 },
                 result: true
             },
-            ,
             {
                 label: 'First `not_empty` (empty string, return false)',
                 rule: [

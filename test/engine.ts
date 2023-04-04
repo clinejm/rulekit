@@ -1,5 +1,5 @@
-const assume = require('assume');
-const { compile } = require('../src/index.js');
+import assume from 'assume';
+import { compile } from '../src/index';
 
 describe('Check Engine', function () {
     it('Can execute rule more than once', async function () {
@@ -126,7 +126,7 @@ describe('Check Engine', function () {
         });
 
         assume(result2).is.true();
-        assume(errorRule2).equal(null);
+        assume(errorRule2).equal(undefined);
 
 
         const { result: result3, errorRule: errorRule3 } = await rule({
@@ -134,7 +134,7 @@ describe('Check Engine', function () {
         });
 
         assume(result3).is.true();
-        assume(errorRule2).equal(null);
+        assume(errorRule2).equal(undefined);
 
 
         const { result: result4, errorRule: errorRule4 } = await rule({
@@ -206,7 +206,7 @@ describe('Check Engine', function () {
         ];
 
         const rule = compile({ rules: test });
-        const sorted = [...rule.fields].sort();
+        const sorted = rule.fields && rule.fields.sort();
         assume(rule.fields).is.a('array');
         assume(sorted).eqls(["aaaaa", "blort", "bob", "fieldcompare", "first", "last", "stan", "steve"]);
 
@@ -243,7 +243,7 @@ describe('Check Engine', function () {
         });
 
         assume(result2).is.true();
-        assume(errorRule2).equal(null);
+        assume(errorRule2).equal(undefined);
 
         const { result: result3, errorRule: errorRule3 } = await rule({
             first: 'foo',
@@ -251,6 +251,6 @@ describe('Check Engine', function () {
         });
 
         assume(result3).is.true();
-        assume(errorRule3).equal(null);
+        assume(errorRule3).equal(undefined);
     });
 });
