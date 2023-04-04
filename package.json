@@ -1,6 +1,6 @@
 {
   "name": "@rule-kit/core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "modern async rules engine",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
